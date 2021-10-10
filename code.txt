@@ -1,0 +1,337 @@
+Private Sub Form_Load()
+Timer1.Enabled = True
+Me.Left = (Screen.Width - Me.Width) / 2
+Me.Top = (Screen.Height - Me.Height) / 2
+End Sub
+
+
+Private Sub Timer1_Timer()
+ProgressBar1.Value = ProgressBar1.Value + 5
+If (ProgressBar1.Value = ProgressBar1.Max) Then
+Timer1.Enabled = False
+Form9.Show
+Unload Me
+End If
+End Sub
+
+Private Sub Combo1_Click()
+Adodc1.RecordSource = "select * from Stock where Supplier_code ='" & Combo1 & "'"
+Adodc1.Refresh
+End Sub
+
+Private Sub Form_Load()
+Adodc1.Refresh
+With Adodc1.Recordset
+Do Until .EOF
+Combo1.AddItem ![Supplier_code]
+.MoveNext
+Loop
+End With
+End Sub
+
+Private Sub homew_Click()
+Form3.Show
+Unload Me
+End Sub
+
+Private Sub mnurefresh_Click()
+Adodc1.RecordSource = "select * from Stock"
+Adodc1.Refresh
+End Sub
+
+
+
+
+Private Sub exitmenu_Click()
+End
+End Sub
+
+Private Sub mnulog_Click()
+Form9.Show
+Unload Me
+End Sub
+
+Private Sub mnurep1_Click()
+Form5.Show
+Unload Me
+End Sub
+
+Private Sub mnusales_Click()
+Form8.Show
+Unload Me
+End Sub
+
+Private Sub mnustknew_Click()
+Form6.Show
+Unload Me
+End Sub
+
+Private Sub mnustkup_Click()
+Form7.Show
+Unload Me
+End Sub
+
+Private Sub report1_Click()
+Form2.Show
+Unload Me
+End Sub
+
+Private Sub usermenu_Click()
+Form4.Show
+End Sub
+
+
+Private Sub Form_Load()
+Me.Left = (Screen.Width - Me.Width) / 2
+Me.Top = (Screen.Height - Me.Height) / 2
+End Sub
+
+Private Sub menuhome_Click()
+Unload Me
+End Sub
+
+Private Sub newuserbtn_Click()
+Adodc1.Recordset.AddNew
+Adodc1.Recordset.Fields("Username").Value = Text1.Text
+If Text2.Text = Text3.Text Then
+Adodc1.Recordset.Fields("Password").Value = Text3.Text
+Adodc1.Recordset.Update
+MsgBox "New User Added Successfully"
+Text1.Text = ""
+Text2.Text = ""
+Text3.Text = ""
+Else
+MsgBox "password not matched"
+Text2.Text = ""
+Text3.Text = ""
+End If
+End Sub
+
+
+
+Private Sub homew_Click()
+Form3.Show
+Unload Me
+End Sub
+
+Private Sub mnurefresh_Click()
+Adodc1.RecordSource = "select * from Sale"
+Adodc1.Refresh
+End Sub
+
+Dim prodcode As String
+
+Private Sub cmdsave_Click()
+If Text1.Text = "" Or Text2.Text = "" Or Text3.Text = "" Or Text4.Text = "" Or Text4.Text = "" Then
+MsgBox "Enter Correct Details"
+Else
+Adodc1.Recordset.Fields("Product_code").Value = Text1.Text
+Adodc1.Recordset.Fields("Item_name").Value = Text2.Text
+Adodc1.Recordset.Fields("Stock_level").Value = Text3.Text
+Adodc1.Recordset.Fields("Net_price").Value = Text4.Text
+Adodc1.Recordset.Fields("Stock_date").Value = Format(Now, "dd/mm/yyyy")
+Adodc1.Recordset.Fields("Supplier_code").Value = Text5.Text
+Adodc1.Recordset.Update
+MsgBox "New Stock Added"
+Text1.Text = ""
+Text2.Text = ""
+Text3.Text = ""
+Text4.Text = ""
+Text5.Text = ""
+cmdsave.Visible = False
+Adodc1.RecordSource = "select * from Stock"
+Adodc1.Refresh
+End If
+End Sub
+
+
+Private Sub Command1_Click()
+Call AutoReg
+Adodc1.Recordset.AddNew
+Text1 = Format(prodcode, "P000")
+cmdsave.Visible = True
+End Sub
+
+Private Sub Form_Load()
+cmdsave.Visible = False
+End Sub
+
+Private Sub mnuhm_Click()
+Form3.Show
+Unload Me
+End Sub
+
+Public Sub AutoReg()
+On Error GoTo Err_id
+Adodc1.Refresh
+If Adodc1.Recordset.RecordCount = 0 Then
+prodcode = 1
+Else
+Adodc1.Recordset.MoveLast
+prodcode = Mid(Adodc1.Recordset("Product_code"), 2, 3) + 1
+Adodc1.Refresh
+End If
+Exit Sub
+Err_id:
+prodcode = 1
+MsgBox "Error Found", vbCritical, "Super Market"
+End Sub
+
+
+Private Sub cmdcheck_Click()
+Adodc2.RecordSource = "select * from Stock where Product_code = '" + Text1.Text + "'"
+Adodc2.Refresh
+If Adodc2.Recordset.RecordCount = 0 Then
+MsgBox "Invalid Product code"
+Adodc2.RecordSource = "select * from Stock"
+Adodc2.Refresh
+ElseIf Adodc2.Recordset.RecordCount = 1 Then
+Text2 = Adodc2.Recordset("Item_name")
+Text3 = Adodc2.Recordset("Stock_level")
+Text4 = Adodc2.Recordset("Net_price")
+Text5 = Adodc2.Recordset("Supplier_code")
+cmdsave.Visible = True
+End If
+End Sub
+
+Private Sub cmdsave_Click()
+If Text1.Text = "" Or Text2.Text = "" Or Text3.Text = "" Or Text4.Text = "" Or Text4.Text = "" Then
+MsgBox "Enter Correct Details"
+Else
+Adodc2.RecordSource = "select * from Stock where Product_code = '" + Text1.Text + "'"
+Adodc2.Refresh
+Adodc2.Recordset.Fields("Product_code").Value = Text1.Text
+Adodc2.Recordset.Fields("Item_name").Value = Text2.Text
+Adodc2.Recordset.Fields("Stock_level").Value = Text3.Text
+Adodc2.Recordset.Fields("Net_price").Value = Text4.Text
+Adodc2.Recordset.Fields("Stock_date").Value = Format(Now, "dd/mm/yyyy")
+Adodc2.Recordset.Fields("Supplier_code").Value = Text5.Text
+Adodc2.Recordset.Update
+MsgBox "Data Updated"
+Adodc2.RecordSource = "select * from Stock"
+Adodc2.Refresh
+Text1.Text = ""
+Text2.Text = ""
+Text3.Text = ""
+Text4.Text = ""
+Text4.Text = ""
+cmdsave.Visible = False
+End If
+End Sub
+
+Private Sub Form_Load()
+cmdsave.Visible = False
+End Sub
+
+Private Sub mnuhm_Click()
+Form3.Show
+Unload Me
+End Sub
+
+Dim invcode As String
+
+Private Sub Command1_Click()
+Call AutoReg
+Adodc1.Recordset.AddNew
+Text1 = Format(invcode, "B000")
+Command3.Visible = True
+End Sub
+
+Private Sub Command2_Click()
+If Text1.Text = "" Or Text2.Text = "" Or Text3.Text = "" Or Text4.Text = "" Then
+MsgBox "Enter Correct Details"
+Else
+Adodc1.Recordset.Fields("Invoice_id").Value = Text1.Text
+Adodc1.Recordset.Fields("Buyer").Value = Text2.Text
+Adodc1.Recordset.Fields("Product_code").Value = Text3.Text
+Adodc1.Recordset.Fields("Item_name").Value = Text4.Text
+Adodc1.Recordset.Fields("Net_price").Value = Label11.Caption
+Adodc1.Recordset.Fields("CGST").Value = Label8.Caption
+Adodc1.Recordset.Fields("SGST").Value = Label9.Caption
+Adodc1.Recordset.Fields("MRP").Value = Label10.Caption
+Adodc1.Recordset.Fields("Invoice_date").Value = Format(Now, "dd/mm/yyyy")
+Adodc1.Recordset.Update
+MsgBox "Done"
+Text1.Text = ""
+Text2.Text = ""
+Text3.Text = ""
+Text4.Text = ""
+Label11.Caption = ""
+Label8.Caption = ""
+Label9.Caption = ""
+Label10.Caption = ""
+Command2.Visible = False
+End If
+End Sub
+
+Private Sub Command3_Click()
+Adodc2.RecordSource = "select * from Stock where Product_code = '" + Text3.Text + "'"
+Adodc2.Refresh
+If Adodc2.Recordset.RecordCount = 0 Then
+MsgBox "Invalid Product code"
+ElseIf Adodc2.Recordset.RecordCount = 1 Then
+Text4 = Adodc2.Recordset("Item_name")
+Label11 = Adodc2.Recordset("Net_price")
+Label8 = Val(Label11) * 0.09
+Label9 = Val(Label11) * 0.09
+Label10 = Val(Label11) + Val(Label8) + Val(Label9)
+Command2.Visible = True
+End If
+End Sub
+
+Private Sub Form_Load()
+Command2.Visible = False
+Command3.Visible = False
+End Sub
+
+Private Sub mnuhmm_Click()
+Form3.Show
+Unload Me
+End Sub
+
+Public Sub AutoReg()
+On Error GoTo Err_id
+Adodc1.Refresh
+If Adodc1.Recordset.RecordCount = 0 Then
+invcode = 1
+Else
+Adodc1.Recordset.MoveLast
+invcode = Mid(Adodc1.Recordset("Invoice_id"), 2, 3) + 1
+Adodc1.Refresh
+End If
+Exit Sub
+Err_id:
+invcode = 1
+MsgBox "Error Found", vbCritical, "Super Market"
+End Sub
+
+Private Sub cmdCancel_Click()
+End
+End Sub
+
+Private Sub cmdOK_Click()
+If Text1 = "" Or Text2 = "" Then
+MsgBox "Please Enter Valid Details"
+Text1.SetFocus
+Exit Sub
+End If
+Adodc1.RecordSource = "select * from Admin where Username = '" + Text1.Text + "' and Password = '" + Text2.Text + "'"
+Adodc1.Refresh
+If Adodc1.Recordset.RecordCount = 0 Then
+MsgBox " Login Failed"
+Text1.Text = ""
+Text2.Text = ""
+Else
+MsgBox "Login Successfull"
+Form3.Show
+Form2.Hide
+Unload Me
+Exit Sub
+End If
+End Sub
+
+Private Sub Form_Load()
+Me.Left = (Screen.Width - Me.Width) / 2
+Me.Top = (Screen.Height - Me.Height) / 2
+End Sub
+
